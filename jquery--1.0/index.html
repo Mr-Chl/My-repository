@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+    <style>
+       .beforeBtn{
+         display: none;
+       } 
+       .dom{
+          width: 40px;
+          height: 40px;
+       }
+    </style>
+</head>
+<body>
+     <div class="btn-group">
+
+          <button class="btn btn-success prevPage">上一页</button>
+          <button class="btn btn-primary firstPage beforeBtn" >1</button>
+          <button class="btn btn-primary beforeBtn" >···</button>
+          <div class="btn-group clickFather">
+
+            <!-- <div class="btn-primary btn click active">1</div>
+            <div class="btn-primary btn click">2</div>
+            <div class="btn-primary btn click">3</div>
+            <div class="btn-primary btn click">4</div>
+            <div class="btn-primary btn click">5</div> -->
+
+          </div>
+         <button class="btn btn-primary afterBtn">···</button>
+         <button class="btn btn-primary lastPage afterBtn">5</button>
+         <button class="btn btn-success nextPage">下一页</button>
+     </div>
+</body>
+<script src="jquery-3.2.1.min.js"></script>
+<script src='bootstrap.min.js'></script>
+<script>
+     $(function(){
+         var pageBtn=6;   //页面有多少个按钮
+         var pageSum=400; //总多少条数据
+         var pageNum=10;   //每一页显示多少数据
+         var first=1;
+         var lastPage=Math.ceil(pageSum / pageNum);
+         var floor=Math.floor(pageBtn/2)==1 ? 0 : Math.floor(pageBtn/2);
+             creatBtn();
+             $('.lastPage').html(lastPage)
+             render(pageSum,pageNum,pageBtn,first)
+           function creatBtn(){  //渲染 结构
+              var str='';
+              var leng=lastPage >= pageBtn ? pageBtn : lastPage;
+                 for(var i=1;i<=leng;i++){
+                    if(i==1){
+                       str+='<div class="btn-default btn dom active">'+i+'</div>'
+                    }else{
+                       str+='<div class="btn-default btn dom">'+i+'</div>'
+                    }
+                 }
+              $('.clickFather').append(str) 
+           };
+
+          $('.clickFather').on('click','.dom',function(){
+            var thisHTML=$(this).html()*1;
+                createArray(thisHTML)
+          })
+          function  createArray(thisHTML){
+                 if(thisHTML>=pageBtn){
+                      first= thisHTML - floor
+                      $('.dom').eq(floor).addClass("active").siblings().removeClass('active');
+                      $('.beforeBtn').show();
+                      $('.afterBtn').show();  
+                 }else{
+                    first=1;
+                    $('.dom').eq(thisHTML-1).addClass("active").siblings().removeClass('active');
+                    $('.beforeBtn').hide();
+                    $('.afterBtn').show();
+                 };
+                 if(first > lastPage - pageBtn){
+                    first = lastPage - pageBtn + 1 ;
+                    $('.dom').eq(thisHTML-first).addClass("active").siblings().removeClass('active'); 
+                     $('.afterBtn').hide()
+                 }
+                render(pageSum,pageNum,pageBtn,first)
+          };
+
+          function  render(pageSum,pageNum,pageBtn,first){
+                  var arr=[];
+                      if(lastPage <= pageBtn){
+                         for(var i=1;i<=lastPage;i++){
+                             arr.push(i);
+                         };
+                         
+                         $('.afterBtn').hide()
+                         $('.beforeBtn').hide()
+                      }else if(lastPage > pageBtn){
+                          for(var i=first;i<first+pageBtn ;i++){
+                             arr.push(i)
+                          }; 
+                      };
+                     updataDom(arr) 
+          };
+           function  updataDom(arr){
+                   for(var i=0;i<arr.length;i++){
+                      $('.dom').eq(i).html(arr[i]) 
+                   };
+           }
+
+          $('.lastPage').on('click',function(){  //回到最后
+                createArray(lastPage)
+          })
+
+          $('.firstPage').on('click',function(){ //回到第一个
+               createArray(1)
+          })
+           $('.prevPage').on('click',function(){ //上一个
+               var ind=$('.active').html()*1
+               ind--;
+               if(ind>=1){
+                  createArray(ind)
+               }
+          })
+           $('.nextPage').on('click',function(){ //下一个
+               var ind=$('.active').html()*1
+               ind++;
+               if(ind<=lastPage){
+                  createArray(ind)
+               }
+          })
+     })
+</script>
+</html>
