@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+    <style>
+    </style>
+</head>
+<body>
+     <div class="btn-group">
+
+          <button class="btn btn-success prevPage">上一页</button>
+          <button class="btn btn-primary firstPage hd" style="display: none">1</button>
+          <button class="btn btn-primary hd" style="display: none">···</button>
+          <div class="btn-group clickFather">
+
+            <!-- <div class="btn-primary btn click active">1</div>
+            <div class="btn-primary btn click">2</div>
+            <div class="btn-primary btn click">3</div>
+            <div class="btn-primary btn click">4</div>
+            <div class="btn-primary btn click">5</div> -->
+
+          </div>
+         <button class="btn btn-primary fd">···</button>
+         <button class="btn btn-primary lastPage fd">5</button>
+         <button class="btn btn-success nextPage">下一页</button>
+     </div>
+</body>
+<script src="jquery-3.2.1.min.js"></script>
+<script src='bootstrap.min.js'></script>
+
+<script>
+    (function(window){
+         var clickFather=document.querySelector('.clickFather') ;
+         var lastPage=document.querySelector('.lastPage') ;
+         var nextPage=document.querySelector('.nextPage') ;
+         var prevPage=document.querySelector('.prevPage') ;
+         var hd=document.querySelectorAll('.hd') ;
+         var fd=document.querySelectorAll('.fd') ;
+         var index=1;
+         var length=1000;
+         var pageNum=40;
+         var BtnNum=2;
+         var click; 
+         var page=Math.ceil(length/pageNum);
+         var floor=Math.floor(BtnNum/2)==1 ? 0 : Math.floor(BtnNum/2);
+             randerDom(BtnNum)
+             name(1)
+             getEle();
+            
+         function getEle(){
+           click=clickFather.querySelectorAll('.click') ;
+           lastPage.innerHTML=page
+             for(var i=0;i<click.length;i++){
+                 (function(i){
+                     click[i].onclick=function(){
+                         var pageHTML=this.innerHTML;
+                             name(pageHTML)
+                     };
+                 })(i)
+             }
+         }
+
+          fd[1].onclick=function(){   //回到 最后
+                name(page)
+          }
+          hd[0].onclick=function(){   //回到 最前
+                name(1)
+          }
+
+            function name(pageHTML){
+                    if (pageHTML >= BtnNum ) { 
+                       index= pageHTML - floor
+                         toggle('hd','block') 
+                         addClass(floor)
+                      } else {
+                         index= 1;
+                         toggle('hd','none') 
+                         addClass(pageHTML-1)
+                     }
+                     if(index > page - BtnNum){
+                         index= page - BtnNum+1;
+                         toggle('fd','none') 
+                         addClass(pageHTML-index)
+                     }else{
+                         toggle('fd','block') 
+                     }
+                     render(length,pageNum,BtnNum,index);
+                    window.location.href='#/'+pageHTML
+            }
+         function addClass(index){  //判断  省略号  显示/隐藏
+              for(var i=0;i<click.length;i++){
+                click[i].classList.remove('active');
+             };
+              click[index].classList.add('active')
+         }
+
+         function toggle(ele,showORhide){
+            for(var i=0,j=fd.length;i<j;i++){
+               if(fd[0].className.indexOf(ele)!=-1){
+                  fd[i].style.display=showORhide; 
+               }else if(hd[0].className.indexOf(ele)!=-1){
+                  hd[i].style.display=showORhide;
+               }else{
+                  fd[i].style.display=showORhide; 
+                  hd[i].style.display=showORhide; 
+               }
+            }
+         }
+        function render(length,pageNum,BtnNum,first){
+            var arr=[];
+            if(page<=BtnNum){
+                for(var i=1;i<=page;i++){
+                    arr.push(i)
+                };
+                 toggle('all','none')
+            }
+            if(page>BtnNum){
+                for(var s=first;s<first+BtnNum;s++){
+                    arr.push(s);
+                };
+            }
+            for(var a=0;a<arr.length;a++){
+                click[a].innerHTML=arr[a]
+            };
+        };
+
+        function randerDom(arr){   //第一次打开浏览器 渲染  页面
+            var str='';
+              for(var i=1;i<=arr;i++){
+                  if(i==1){
+                      str+='<div class="btn-default btn click active">'+i+'</div>'
+                  }else{
+                      str+='<div class="btn-default btn click">'+i+'</div>'
+                  }
+              };
+           clickFather.innerHTML=str;
+           getEle()
+        }
+        prevPage.onclick=function(){    //  上一页
+           var actives=clickFather.querySelector('.active').innerHTML*1
+               actives--
+               if(actives>0){
+                  name(actives)
+               }
+        }
+        nextPage.onclick=function(){  //下一页
+           var actives=clickFather.querySelector('.active').innerHTML*1
+               actives++
+               if(actives<=page){
+                 name(actives)
+               }
+        }
+    })(window);
+
+</script>
+</html>
